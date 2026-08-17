@@ -153,8 +153,16 @@ avgGain_i = (avgGain_{i-1} * 13 + gain_i) / 14
 avgLoss_i = (avgLoss_{i-1} * 13 + loss_i) / 14
 ```
 
-Then `RSI = 100 - 100 / (1 + avgGain/avgLoss)`. When `avgLoss` is 0, RSI is 100. `null` for
-index `< 14`.
+Then `RSI = 100 - 100 / (1 + avgGain/avgLoss)`, with two guards on the degenerate cases, checked
+in this order:
+
+* `avgGain == 0 && avgLoss == 0` — a perfectly flat window, where `RS` is `0/0` and undefined.
+  RSI is **50**. Wilder's original definition is silent here, and folding this case into the
+  `avgLoss == 0` branch would paint a stalled or illiquid market at the top of the band, reading
+  as extremely overbought when there is no directional pressure at all.
+* `avgLoss == 0` (and therefore `avgGain > 0`) — a strictly rising window. RSI is **100**.
+
+`null` for index `< 14`.
 
 **MACD(12, 26, 9)** —
 `macd = EMA(12) - EMA(26)`, `null` wherever either input is `null`;

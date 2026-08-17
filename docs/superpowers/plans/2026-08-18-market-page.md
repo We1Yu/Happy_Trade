@@ -872,6 +872,12 @@ public final class Rsi {
     }
 
     private static double fromAverages(double averageGain, double averageLoss) {
+        // A perfectly flat window gives 0/0, which is undefined. Folding it into the
+        // averageLoss == 0 branch below would paint a stalled market at the top of the band,
+        // reading as extremely overbought when there is no directional pressure at all.
+        if (averageGain == 0 && averageLoss == 0) {
+            return 50.0;
+        }
         if (averageLoss == 0) {
             return 100.0;
         }
