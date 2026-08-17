@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: happy-trade-backend
+
+happytrade:
+  binance:
+    base-url: https://api.binance.com
+    timeout-seconds: 5
+
+logging:
+  level:
+    com.happytrade: INFO
