@@ -779,9 +779,15 @@ class RsiTest {
     }
 
     @Test
-    void alternatingEqualMovesGiveFifty() {
-        // +1, -1 repeating produces equal average gain and loss, so RS is 1 and RSI is 50.
-        double[] closes = new double[41];
+    void alternatingEqualMovesConvergeToWildersSteadyState() {
+        // A +1/-1 alternating series does NOT settle at 50 under Wilder's smoothing: the two
+        // averages oscillate in antiphase rather than staying equal. Solving the fixed point for
+        // period 14 gives, immediately after a rise, averageGain = 14/27 and averageLoss = 13/27
+        // (and mirrored immediately after a fall). So RSI alternates between the two values below.
+        double afterRise = 100 - 1300.0 / 27;
+        double afterFall = 100 - 1400.0 / 27;
+
+        double[] closes = new double[401];
         closes[0] = 100;
         for (int i = 1; i < closes.length; i++) {
             closes[i] = (i % 2 == 1) ? 101 : 100;
@@ -789,7 +795,8 @@ class RsiTest {
 
         Double[] result = Rsi.calculate(closes, 14);
 
-        assertThat(result[40]).isCloseTo(50.0, Offset.offset(1e-6));
+        assertThat(result[399]).isCloseTo(afterRise, Offset.offset(1e-6));
+        assertThat(result[400]).isCloseTo(afterFall, Offset.offset(1e-6));
     }
 
     @Test
