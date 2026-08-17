@@ -97,7 +97,7 @@ Copied verbatim from `docs/superpowers/specs/2026-08-17-market-page-design.md`. 
 
 **Interfaces:**
 - Consumes: nothing (first task).
-- Produces: a runnable Spring Boot app on port 8080 with `spring-boot-starter-web`, `spring-boot-starter-cache`, `caffeine`, `spring-boot-starter-test`, and `mockwebserver` on the test classpath. All later backend tasks build on this Maven module.
+- Produces: a runnable Spring Boot app on port 8080 with `spring-boot-starter-web`, `spring-boot-starter-cache`, `spring-boot-starter-validation`, and `caffeine`, plus `spring-boot-starter-test` and `mockwebserver` on the test classpath. All later backend tasks build on this Maven module.
 
 - [ ] **Step 1: Confirm you are on the feature branch**
 
@@ -3608,24 +3608,13 @@ with:
 | [0002](0002-market-data-and-charting-stack.md) | Market Data Source and Charting Stack | accepted |
 ```
 
-- [ ] **Step 3: Update the changelog**
+- [ ] **Step 3: Reconcile the changelog**
 
-In `CHANGELOG.md`, replace:
+`CLAUDE.md` requires every implementation change to update `CHANGELOG.md` under `[Unreleased]`, so Tasks 1–13 each added their own entry as they landed. This step therefore **reconciles** what accumulated rather than replacing a fixed block — read the current `[Unreleased] / Added` section first and edit around what is already there.
 
-```markdown
-### Added
-
-- Initial project structure and governance guidelines.
-- Base ADR setup and architecture baseline.
-```
-
-with:
+Confirm the section covers all seven items below, in this order after the two pre-existing baseline entries. Add any that are missing, and merge duplicates or near-duplicates left by individual tasks into the single wording given here:
 
 ```markdown
-### Added
-
-- Initial project structure and governance guidelines.
-- Base ADR setup and architecture baseline.
 - Spring Boot backend skeleton with Docker Compose stack (`db`, `backend`, `frontend`).
 - Keyless Binance public market data provider (no API key, no request signing).
 - Dependency-free indicator package: SMA, EMA, RSI (Wilder), and MACD.
@@ -3634,6 +3623,8 @@ with:
 - BTC market page with a four-pane lightweight-charts view (price, volume, RSI, MACD),
   interval switching, and indicator toggles.
 ```
+
+Leave the two baseline entries ("Initial project structure and governance guidelines." and "Base ADR setup and architecture baseline.") untouched at the top of the list.
 
 - [ ] **Step 4: Verify the full suite still passes**
 
