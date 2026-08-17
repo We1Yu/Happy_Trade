@@ -81,4 +81,17 @@ class RsiTest {
 
         assertThat(result).hasSize(14).containsOnlyNulls();
     }
+
+    @Test
+    void flatSeriesGivesFifty() {
+        double[] closes = new double[20];
+        for (int i = 0; i < closes.length; i++) {
+            closes[i] = 100.0;
+        }
+
+        Double[] result = Rsi.calculate(closes, 14);
+
+        assertThat(result[14]).isCloseTo(50.0, TOLERANCE);
+        assertThat(result[19]).isCloseTo(50.0, TOLERANCE);
+    }
 }
