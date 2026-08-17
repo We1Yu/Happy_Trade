@@ -15,3 +15,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - SMA and EMA indicators (`Sma`, `Ema`) with trailing-mean and SMA-seeded exponential smoothing, each null-padded during the warm-up window.
 - Domain model types for market data: `Candle` (OHLCV record), `Ticker` (price and 24h stats), and `Interval` enum (timeframe codes with bidirectional conversion).
 - Keyless Binance market data provider (`BinanceMarketDataProvider`) reading public klines and 24hr ticker endpoints only, with `UpstreamException` mapping for rate-limit (429/418), region-block (451), and timeout responses. Sends no API key and performs no request signing.
+- RSI flat-window handling: perfectly flat price series (0/0 RS) now returns 50 (neutral) instead of incorrectly collapsing into the all-gains case.
