@@ -99,13 +99,12 @@ Copied verbatim from `docs/superpowers/specs/2026-08-17-market-page-design.md`. 
 - Consumes: nothing (first task).
 - Produces: a runnable Spring Boot app on port 8080 with `spring-boot-starter-web`, `spring-boot-starter-cache`, `caffeine`, `spring-boot-starter-test`, and `mockwebserver` on the test classpath. All later backend tasks build on this Maven module.
 
-- [ ] **Step 1: Create the feature branch**
+- [ ] **Step 1: Confirm you are on the feature branch**
 
-The repository is on `main` with a single commit. Work on a branch.
+The `feat/market-page` branch already exists and holds this plan. Confirm you are on it rather than on `main`.
 
-```bash
-git checkout -b feat/market-page
-```
+Run: `git branch --show-current`
+Expected: `feat/market-page`. If not, run `git checkout feat/market-page`.
 
 - [ ] **Step 2: Create `.gitignore`**
 
