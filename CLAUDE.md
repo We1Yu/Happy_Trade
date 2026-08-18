@@ -37,11 +37,15 @@
 
 ## 語言政策
 
-- Sub-agent 的內部推理、prompt 檔案、程式碼、註解、commit message → **英文**。
+- Sub-agent 的內部推理、prompt 檔案（含 `docs/superpowers/plans/` 的實作計畫）、程式碼、註解、commit message → **英文**。
 - 對使用者的所有對話回覆 → **繁體中文**。
+- **文件一律繁體中文**：`CHANGELOG.md`、`docs/adr/`、`docs/superpowers/specs/`。新寫與改寫都用中文，不要退回英文。
+  - 保持英文原文的部分：程式碼區塊、識別字（類別／方法／欄位名）、檔案路徑、API 路徑、HTTP 方法、套件與工具名稱、ADR 的 `Status` 值（`proposed` / `accepted` / …）、ADR 檔名 slug。
+  - CHANGELOG 區塊標題用中文：`### 新增`、`### 變更`、`### 修正`、`### 移除`。
 
 ## 治理與紀錄
 
 - Sub-agent 規範：`.claude/agents/happy-trade-governance.md`
 - 架構決策：符合條件的變更必須寫入 `docs/adr/`（判斷標準見 `docs/adr/README.md`）。
 - 實作變更：必須更新 `CHANGELOG.md` 的 `[Unreleased]` 區塊。
+- 進度看板：每完成一個 Task，必須在同一次 commit 更新 `docs/PROGRESS.md`（打勾、填 commit hash、改寫「現在的狀態」與「下一個動作」）。
