@@ -24,6 +24,8 @@
 - 具分頁可見性感知的輪詢 hooks（`frontend/src/features/market/hooks/`）：`usePolling` 立即抓一次後依間隔重抓，**失敗時不清空既有資料**（改標記 `isStale`，因為看盤時空白畫面比舊價格更糟），分頁切到背景就停止輪詢、切回來立刻補抓一次；非 `MarketApiError` 的例外統一包成 `code: 'NETWORK'`。`useTicker` 固定 5 秒輪詢；`useChartData` 依 K 棒週期調整節奏（`CHART_POLL_MS`：1m 20 秒 … 1d 300 秒）。
 - 前端測試環境：Vitest 改用 `jsdom`，加入 `@testing-library/react` 以測試 hook 行為（`npm audit`：0 vulnerabilities）。
 - BTC 行情頁（`frontend/src/features/market/`）：`MarketPage` 串起即時報價、週期切換與指標開關；`PriceHeader` 顯示價格／24 小時漲跌與高低量，並在資料延遲或上游被封鎖時顯示對應標記；`IntervalSelector` 提供 1m–1d 六個週期（以 `aria-pressed` 標示選取）；`IndicatorToggles` 可個別開關 SMA200／EMA15-30-45-60／RSI14／MACD；`PriceChart` 以 lightweight-charts v5 的 Panes API 建立單一圖表、四個窗格（K 線＋均線、成交量、RSI 含 30／70 參考線、MACD 含柱狀圖），共用同一條時間軸與十字線。整頁唯讀，不含任何下單路徑。
+- Docker Compose 堆疊（`docker-compose.yml`）：`db`（postgres:16，含 `pg_isready` healthcheck 與 `pgdata` 具名 volume）、`backend`（8080，`HAPPYTRADE_BINANCE_BASE_URL` 由環境變數注入）、`frontend`（5173，`VITE_PROXY_TARGET` 指向 `http://backend:8080`）。`db` 這個切片還沒接上後端，先起起來是為了讓執行中的堆疊對齊 ADR-0001，之後的 AI 訊號切片不必重新配置。
+- `frontend/.dockerignore` 與 `backend/.dockerignore`：前端映像的 `COPY . .` 會把主機（Windows）的 `node_modules` 蓋掉容器裡 `npm ci` 的結果，esbuild／rollup 的原生二進位檔平台不符會讓 dev server 起不來；後端則排除 `target/` 以縮小 build context。
 
 ### 修正
 

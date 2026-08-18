@@ -1,0 +1,5 @@
+# Host node_modules holds platform-specific binaries (esbuild, rollup) built for
+# Windows; copying them over the container's `npm ci` result breaks the dev server.
+node_modules
+dist
+*.tsbuildinfo
