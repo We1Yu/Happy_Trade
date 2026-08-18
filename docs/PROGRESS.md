@@ -22,7 +22,7 @@
 | 7 | REST endpoints + 錯誤對應 | ✅ | `0ea9250` |
 | 8 | Caffeine 快取 | ✅ | `a463f4e` |
 | 9 | 前端骨架（Vite + React + TS） | ✅ | `43081c1` |
-| 10 | 前端 types + API client | ✅ | `a1fb1a7` |
+| 10 | 前端 types + API client | ✅ | `e0e5a2b` |
 | 11 | Polling hooks（useTicker / useChartData） | ⬜ | — |
 | 12 | Market page UI（圖表 + 切換器） | ⬜ | — |
 | 13 | Docker Compose（db / backend / frontend） | ⬜ | — |
