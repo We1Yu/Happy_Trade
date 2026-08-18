@@ -1,5 +1,6 @@
 package com.happytrade.market.service;
 
+import com.happytrade.market.config.CacheConfig;
 import com.happytrade.market.indicator.Ema;
 import com.happytrade.market.indicator.Macd;
 import com.happytrade.market.indicator.MacdResult;
@@ -9,6 +10,7 @@ import com.happytrade.market.model.Candle;
 import com.happytrade.market.model.Interval;
 import com.happytrade.market.model.Ticker;
 import com.happytrade.market.provider.MarketDataProvider;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -55,6 +57,7 @@ public class MarketChartService {
     ) {
     }
 
+    @Cacheable(cacheNames = CacheConfig.CHART_CACHE, key = "#symbol + ':' + #interval + ':' + #limit")
     public ChartData buildChart(String symbol, Interval interval, int limit) {
         List<Candle> fetched = provider.fetchCandles(symbol, interval, limit + WARM_UP);
 
@@ -88,6 +91,7 @@ public class MarketChartService {
         );
     }
 
+    @Cacheable(cacheNames = CacheConfig.TICKER_CACHE, key = "#symbol")
     public Ticker fetchTicker(String symbol) {
         return provider.fetchTicker(symbol);
     }
