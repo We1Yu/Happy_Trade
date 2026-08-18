@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 // The proxy target differs between local development (localhost) and Docker Compose (the
@@ -16,5 +16,9 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+  },
+  // Hooks touch document.visibilityState and timers, so tests need a DOM.
+  test: {
+    environment: 'jsdom',
   },
 });
