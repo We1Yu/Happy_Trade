@@ -24,7 +24,7 @@
 | 9 | 前端骨架（Vite + React + TS） | ✅ | `43081c1` |
 | 10 | 前端 types + API client | ✅ | `e0e5a2b` |
 | 11 | Polling hooks（useTicker / useChartData） | ✅ | `3934f25` |
-| 12 | Market page UI（圖表 + 切換器） | ✅ | `35addbe` |
+| 12 | Market page UI（圖表 + 切換器） | ✅ | `e3b42f2` |
 | 13 | Docker Compose（db / backend / frontend） | ⬜ | — |
 | 14 | 治理紀錄（ADR 0002 + CHANGELOG 收尾） | ⬜ | — |
 
