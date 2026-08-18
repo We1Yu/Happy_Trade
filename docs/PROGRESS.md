@@ -25,7 +25,7 @@
 | 10 | 前端 types + API client | ✅ | `e0e5a2b` |
 | 11 | Polling hooks（useTicker / useChartData） | ✅ | `3934f25` |
 | 12 | Market page UI（圖表 + 切換器） | ✅ | `e3b42f2` |
-| 13 | Docker Compose（db / backend / frontend） | ✅ | `PENDING` |
+| 13 | Docker Compose（db / backend / frontend） | ✅ | `8254511` |
 | 14 | 治理紀錄（ADR 0002 + CHANGELOG 收尾） | ⬜ | — |
 
 圖例：✅ 完成 ｜ 🔄 進行中 ｜ ⬜ 未開始
