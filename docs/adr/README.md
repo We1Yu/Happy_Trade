@@ -19,4 +19,4 @@
 
 | # | 標題 | 狀態 |
 |---|---|---|
-| [0001](0001-initial-system-architecture.md) | Initial System Architecture | accepted |
+| [0001](0001-initial-system-architecture.md) | 初始系統架構 | accepted |

@@ -1,30 +1,30 @@
-# [Short title of solved problem and solution]
+# [問題與解法的簡短標題]
 
-* Status: [proposed | accepted | rejected | superseded]
-* Date: [YYYY-MM-DD]
+* 狀態：[proposed | accepted | rejected | superseded]
+* 日期：[YYYY-MM-DD]
 
-## Context and Problem Statement
+## 背景與問題陳述
 
-[Describe the context and problem]
+[描述背景與要解決的問題]
 
-## Decision Drivers
+## 決策考量因素
 
-* [Driver 1]
-* [Driver 2]
+* [因素 1]
+* [因素 2]
 
-## Considered Options
+## 評估過的方案
 
-* [Option 1]
-* [Option 2]
+* [方案 1]
+* [方案 2]
 
-## Decision Outcome
+## 決策結果
 
-Chosen Option: "[Option 1]", because [justification].
+選定方案：「[方案 1]」，理由是 [說明]。
 
-### Positive Consequences
+### 正面影響
 
-* [Consequence 1]
+* [影響 1]
 
-### Negative Consequences
+### 負面影響
 
-* [Consequence 1]
+* [影響 1]

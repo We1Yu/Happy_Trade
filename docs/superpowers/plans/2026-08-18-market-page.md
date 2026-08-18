@@ -3527,7 +3527,7 @@ git commit -m "feat: add Docker Compose stack for db, backend, and frontend"
 **Files:**
 - Create: `docs/adr/0002-market-data-and-charting-stack.md`
 - Modify: `docs/adr/README.md` (append a row to the index table)
-- Modify: `CHANGELOG.md` (add entries under `[Unreleased]` / `Added`)
+- Modify: `CHANGELOG.md` (add entries under `[Unreleased]` / `新增`)
 
 **Interfaces:**
 - Consumes: every decision made in Tasks 1–13.
@@ -3623,7 +3623,7 @@ with:
 
 - [ ] **Step 3: Reconcile the changelog**
 
-`CLAUDE.md` requires every implementation change to update `CHANGELOG.md` under `[Unreleased]`, so Tasks 1–13 each added their own entry as they landed. This step therefore **reconciles** what accumulated rather than replacing a fixed block — read the current `[Unreleased] / Added` section first and edit around what is already there.
+`CLAUDE.md` requires every implementation change to update `CHANGELOG.md` under `[Unreleased]`, so Tasks 1–13 each added their own entry as they landed. This step therefore **reconciles** what accumulated rather than replacing a fixed block — read the current `[Unreleased] / 新增` section first and edit around what is already there.
 
 Confirm the section covers all seven items below, in this order after the two pre-existing baseline entries. Add any that are missing, and merge duplicates or near-duplicates left by individual tasks into the single wording given here:
 
