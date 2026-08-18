@@ -23,7 +23,7 @@
 | 8 | Caffeine 快取 | ✅ | `a463f4e` |
 | 9 | 前端骨架（Vite + React + TS） | ✅ | `43081c1` |
 | 10 | 前端 types + API client | ✅ | `e0e5a2b` |
-| 11 | Polling hooks（useTicker / useChartData） | ✅ | `PENDING` |
+| 11 | Polling hooks（useTicker / useChartData） | ✅ | `3934f25` |
 | 12 | Market page UI（圖表 + 切換器） | ⬜ | — |
 | 13 | Docker Compose（db / backend / frontend） | ⬜ | — |
 | 14 | 治理紀錄（ADR 0002 + CHANGELOG 收尾） | ⬜ | — |
