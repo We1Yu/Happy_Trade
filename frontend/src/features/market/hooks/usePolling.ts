@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MarketApiError } from '../api/marketApi';
 
 export interface PollingState<T> {
@@ -8,13 +8,16 @@ export interface PollingState<T> {
   isStale: boolean;
 }
 
+/**
+ * `fetcher` must be memoised by the caller — its identity is a dependency, so a fresh closure on
+ * every render would restart the poll on every render. `useTicker` and `useChartData` wrap it in
+ * `useCallback`, which makes the identity change exactly when the request itself changes. Keying
+ * the effect on the cadence alone is not enough: 15m and 1h both poll every 60s, so switching
+ * between them would leave the previous interval's chart on screen until the next scheduled tick.
+ */
 export function usePolling<T>(fetcher: () => Promise<T>, intervalMs: number): PollingState<T> {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<MarketApiError | null>(null);
-
-  // Kept in a ref so changing the fetcher identity does not restart the timer.
-  const fetcherRef = useRef(fetcher);
-  fetcherRef.current = fetcher;
 
   useEffect(() => {
     let cancelled = false;
@@ -22,7 +25,7 @@ export function usePolling<T>(fetcher: () => Promise<T>, intervalMs: number): Po
 
     const run = async () => {
       try {
-        const result = await fetcherRef.current();
+        const result = await fetcher();
         if (cancelled) return;
         setData(result);
         setError(null);
@@ -66,7 +69,7 @@ export function usePolling<T>(fetcher: () => Promise<T>, intervalMs: number): Po
       stop();
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
-  }, [intervalMs]);
+  }, [fetcher, intervalMs]);
 
   return { data, error, isStale: error !== null && data !== null };
 }

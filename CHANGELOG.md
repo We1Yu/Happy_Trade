@@ -23,3 +23,9 @@
 - 前端行情型別與 API client（`frontend/src/features/market/`）：`types.ts` 對應後端 DTO（`Candle`、`TickerData`、`Indicators`／`MacdSeries`、`ChartData`、`ApiErrorBody`，以及 `INTERVALS` 與 `IntervalCode`），指標序列與 K 棒同長度、同索引，暖機段以 `null` 表示；`api/marketApi.ts` 提供 `fetchTicker()` 與 `fetchChart()`，並把非 2xx 回應的 `ApiError` 轉成帶 `code` 與 `retryAfter` 的 `MarketApiError`，讓輪詢層能據此退避。
 - 具分頁可見性感知的輪詢 hooks（`frontend/src/features/market/hooks/`）：`usePolling` 立即抓一次後依間隔重抓，**失敗時不清空既有資料**（改標記 `isStale`，因為看盤時空白畫面比舊價格更糟），分頁切到背景就停止輪詢、切回來立刻補抓一次；非 `MarketApiError` 的例外統一包成 `code: 'NETWORK'`。`useTicker` 固定 5 秒輪詢；`useChartData` 依 K 棒週期調整節奏（`CHART_POLL_MS`：1m 20 秒 … 1d 300 秒）。
 - 前端測試環境：Vitest 改用 `jsdom`，加入 `@testing-library/react` 以測試 hook 行為（`npm audit`：0 vulnerabilities）。
+- BTC 行情頁（`frontend/src/features/market/`）：`MarketPage` 串起即時報價、週期切換與指標開關；`PriceHeader` 顯示價格／24 小時漲跌與高低量，並在資料延遲或上游被封鎖時顯示對應標記；`IntervalSelector` 提供 1m–1d 六個週期（以 `aria-pressed` 標示選取）；`IndicatorToggles` 可個別開關 SMA200／EMA15-30-45-60／RSI14／MACD；`PriceChart` 以 lightweight-charts v5 的 Panes API 建立單一圖表、四個窗格（K 線＋均線、成交量、RSI 含 30／70 參考線、MACD 含柱狀圖），共用同一條時間軸與十字線。整頁唯讀，不含任何下單路徑。
+
+### 修正
+
+- 切換到輪詢節奏相同的週期時，圖表不會立即重載：`usePolling` 原本只以輪詢間隔為 effect 相依，而 15m 與 1h 同為 60 秒，導致點下去後畫面最久要等一分鐘才換資料。改為同時相依於 fetcher 本身（`useTicker`／`useChartData` 已用 `useCallback` 記憶化，其識別值恰好在請求內容改變時才變動）。
+- 圖表窗格比例錯誤：原本用掛載當下的 `container.clientHeight` 換算像素高度，但當時 flex 版面尚未定案、讀到的仍是 CSS `min-height`，價格窗格因此過高。改用 `setStretchFactor` 依 60／15／12／13 的比例分配，也能自動適應之後的視窗縮放。

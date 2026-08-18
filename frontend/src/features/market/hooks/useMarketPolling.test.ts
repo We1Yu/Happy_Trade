@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CHART_POLL_MS, useChartData } from './useChartData';
 import { useTicker } from './useTicker';
+import type { IntervalCode } from '../types';
 
 vi.mock('../api/marketApi', async () => {
   const actual = await vi.importActual<typeof import('../api/marketApi')>('../api/marketApi');
@@ -57,5 +58,25 @@ describe('useChartData', () => {
 
   it('polls a 1m chart far more often than a 1d chart', () => {
     expect(CHART_POLL_MS['1m']).toBeLessThan(CHART_POLL_MS['1d']);
+  });
+});
+
+describe('switching interval', () => {
+  it('reloads immediately even when the new interval polls at the same cadence', async () => {
+    // 15m and 1h share a 60s cadence, so an effect keyed only on the cadence never restarts and
+    // the stale chart would sit on screen for up to a minute after the user clicks.
+    expect(CHART_POLL_MS['15m']).toBe(CHART_POLL_MS['1h']);
+
+    const { rerender } = renderHook(({ interval }: { interval: IntervalCode }) =>
+      useChartData('BTCUSDT', interval),
+    { initialProps: { interval: '15m' as IntervalCode } });
+    await advance(0);
+    expect(fetchChart).toHaveBeenCalledWith('BTCUSDT', '15m');
+
+    rerender({ interval: '1h' });
+    await advance(0);
+
+    expect(fetchChart).toHaveBeenCalledTimes(2);
+    expect(fetchChart).toHaveBeenLastCalledWith('BTCUSDT', '1h');
   });
 });
