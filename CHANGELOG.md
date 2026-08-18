@@ -16,4 +16,7 @@
 - 行情資料的領域模型：`Candle`（OHLCV record）、`Ticker`（價格與 24 小時統計）、`Interval` enum（時間框架代碼，支援雙向轉換）。
 - 無金鑰的 Binance 行情資料提供者（`BinanceMarketDataProvider`），只讀取公開的 klines 與 24hr ticker 端點，並以 `UpstreamException` 對應限流（429/418）、地區封鎖（451）與逾時。不送 API key，也不做請求簽章。
 - RSI 平盤處理：完全平盤的價格序列（RS 為 0/0）現在回傳 50（中性），不再誤判為全數上漲。
-- Frontend scaffold (`frontend/`): Vite + React 18 + TypeScript app with a dev server on 5173 proxying `/api` to the backend (`VITE_PROXY_TARGET`, default `http://localhost:8080`), dark theme CSS variables, `lightweight-charts` and `vitest` installed, and a Dockerfile running the dev server. Toolchain pinned to Vite 7 / `@vitejs/plugin-react` 5 / Vitest 3 instead of the planned Vite 5 line, which shipped an esbuild dev-server advisory (`npm audit`: 0 vulnerabilities).
+- 行情圖表服務（`MarketChartService`）：在請求的顯示筆數之上多抓 200 根暖機 K 棒，於完整視窗上計算 SMA200／EMA15-30-45-60／RSI14／MACD，再裁掉暖機段，讓每條指標序列與回傳的 K 棒索引完全對齊。上游回傳筆數少於顯示需求時，改為保留全部 K 棒。
+- 唯讀行情 REST 端點：`GET /api/market/ticker` 與 `GET /api/market/chart`（`MarketController`），搭配把三條 MACD 序列收攏成巢狀結構的 `ChartResponse` DTO、symbol／interval／limit 驗證（limit 50-800），以及 `@RestControllerAdvice`：參數錯誤對應 400，上游限流／封鎖／逾時分別對應 503／503／504，回傳結構化的 `ApiError`。所有端點都不下單、也不模擬下單。
+- 行情資料的 Caffeine 快取（`CacheConfig`）：`marketChart`（TTL 15 秒、上限 200 筆，以 symbol＋interval＋limit 為 key）與 `marketTicker`（TTL 3 秒、上限 50 筆，以 symbol 為 key），讓多個瀏覽器分頁同時輪詢時不會等比放大對 Binance 的請求。
+- 前端骨架（`frontend/`）：Vite + React 18 + TypeScript，dev server 跑在 5173 並把 `/api` 代理到後端（`VITE_PROXY_TARGET`，預設 `http://localhost:8080`），含深色主題 CSS 變數、已安裝 `lightweight-charts` 與 `vitest`，以及執行 dev server 的 Dockerfile。工具鏈改用 Vite 7／`@vitejs/plugin-react` 5／Vitest 3，而非計畫中的 Vite 5 線——後者相依的 esbuild 有 dev server 安全通報（`npm audit`：0 vulnerabilities）。
