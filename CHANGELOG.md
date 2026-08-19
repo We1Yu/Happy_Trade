@@ -14,11 +14,11 @@
 
 #### 新增
 
-- ADR 0002「市場資料擷取與圖表技術選型」（`docs/adr/0002-market-data-and-charting-stack.md`）：記錄選擇「後端轉接 Binance Spot 公開 REST ＋ 前端 Lightweight Charts」的理由與被否決的方案。資料更新機制據實記為**前端輪詢驅動的 pull-through 快取**（後端無 `@Scheduled`），並列出目前已知的取捨：K 線未持久化、快取過期遇上游失敗無降級路徑、symbol 無白名單、WebSocket 升級門檻未定義。(`TBD`)
+- ADR 0002「市場資料擷取與圖表技術選型」（`docs/adr/0002-market-data-and-charting-stack.md`）：記錄選擇「後端轉接 Binance Spot 公開 REST ＋ 前端 Lightweight Charts」的理由與被否決的方案。資料更新機制據實記為**前端輪詢驅動的 pull-through 快取**（後端無 `@Scheduled`），並列出目前已知的取捨：K 線未持久化、快取過期遇上游失敗無降級路徑、symbol 無白名單、WebSocket 升級門檻未定義。(`2315b7d`)
 
 #### 變更
 
-- `CHANGELOG.md` 改為依日期分組（`### YYYY-MM-DD` 底下再分 `#### 新增` / `#### 變更` / `#### 修正` / `#### 移除`），每條補上對應的 commit hash；此格式約定同步寫入 `CLAUDE.md` 的治理章節。(`TBD`)
+- `CHANGELOG.md` 改為依日期分組（`### YYYY-MM-DD` 底下再分 `#### 新增` / `#### 變更` / `#### 修正` / `#### 移除`），每條補上對應的 commit hash；此格式約定同步寫入 `CLAUDE.md` 的治理章節。(`2315b7d`)
 
 ### 2026-08-18
 

@@ -26,7 +26,7 @@
 | 11 | Polling hooks（useTicker / useChartData） | ✅ | `3934f25` |
 | 12 | Market page UI（圖表 + 切換器） | ✅ | `e3b42f2` |
 | 13 | Docker Compose（db / backend / frontend） | ✅ | `8254511` |
-| 14 | 治理紀錄（ADR 0002 + CHANGELOG 收尾） | ✅ | `TBD` |
+| 14 | 治理紀錄（ADR 0002 + CHANGELOG 收尾） | ✅ | `2315b7d` |
 
 圖例：✅ 完成 ｜ 🔄 進行中 ｜ ⬜ 未開始
 
