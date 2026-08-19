@@ -1,7 +1,7 @@
 # CI 測試閘門與分支保護設計
 
 * 日期：2026-08-18
-* 狀態：accepted（第 1、2 層已實作；第 3 層受 GitHub 方案限制，見 §9）
+* 狀態：accepted（三層皆已實作並驗證，見 §9）
 * 範圍：在既有 GitHub remote（`We1Yu/Happy_Trade`）上建立自動化測試閘門，讓未通過測試的變更無法進入 `main`。
 
 ## 1. 目標
@@ -117,7 +117,37 @@ feat/xxx 分支
 
 ## 9. 實作結果（2026-08-19 補記）
 
-* 第 1 層（`.githooks/pre-push`）與第 2 層（`.github/workflows/ci.yml`）已實作，綠燈與紅燈路徑都實測過（故意寫失敗測試 → hook 以非零狀態中止 push，驗證後移除）。
-* **第 3 層無法實作**：本 repo 為 private，`gh api` 對 `branches/main/protection` 與 `rulesets` 皆回 403「Upgrade to GitHub Pro or make this repository public」。等待使用者在「轉 public」／「升級 Pro」／「只保留前兩層」之間決定，未自行改動 repo 可見性。因此成功條件 3、4 目前無法驗證。
-* 實作中發現規格未預期的一點：`backend/mvnw` 在 git index 是 `100644`，Linux runner 上 `./mvnw` 會因缺少執行位元而失敗，已用 `git update-index --chmod=+x` 修正。
+三層防線全部實作完成，第 1 節的五個成功條件逐項實測通過。
+
+### 實作內容
+
+| 層 | 檔案／設定 | 狀態 |
+|---|---|---|
+| 1. 本機 push 前 | `.githooks/pre-push`（需 `git config core.hooksPath .githooks`） | ✅ |
+| 2. GitHub CI | `.github/workflows/ci.yml`，`backend` / `frontend` 兩個平行 job | ✅ |
+| 3. 分支保護 | `main`：要求 2 個 status check（strict）、必須經 PR、`enforce_admins`、禁止 force push 與刪除 | ✅ |
+
+### 成功條件驗證
+
+1. ✅ 前端塞入故意失敗的測試 → hook 以非零狀態中止 push，印出「前端測試失敗（frontend）」，驗證後移除。
+2. ✅ 以 `--no-verify` 繞過本機 hook 直推 → 被伺服器端擋下（見第 4 項）。
+3. ✅ 分支保護要求 `backend`、`frontend` 兩個 check，未通過即無法 merge。
+4. ✅ 直接對 `main` push 被拒：`GH006: Protected branch update failed` / `Changes must be made through a pull request` / `2 of 2 required status checks are expected`。
+5. ✅ CI 兩個 job 皆綠（`backend` 33 秒、`frontend` 30 秒），PR 可 merge。
+
+### 與規格的差異與意外
+
+* **repo 已由 private 轉為 public**（使用者決定）。免費方案的 private repo 對 branch protection 與 rulesets 一律回 403；轉 public 後解鎖，Actions 額度也由每月 2,000 分鐘變為無限。轉換前已掃過追蹤中的檔案，無 `.env`、無交易所金鑰（`BinanceMarketDataProviderTest` 中唯一的相關字串是「斷言不送出 API key」的測試），僅 `docker-compose.yml` 帶一個本機用的 `POSTGRES_PASSWORD` 預設值。
+* `backend/mvnw` 在 git index 是 `100644`，Linux runner 上會因缺少執行位元而失敗，已以 `git update-index --chmod=+x` 修正為 `100755`。
+* **首次 CI 紅燈，暴露出本機與 CI 的環境落差**：規格寫的 Node 20 不在 `jsdom@30`（`^22.22.2 || ^24.15.0 || >=26`）與 `undici@8.10`（`>=22.19.0`）的支援範圍內，前端測試在載入階段就死於 `TypeError: webidl.util.markAsUncloneable is not a function`，9 個測試檔一個都沒跑到。本機 Node v24.15.0 完全看不出這個問題。CI 改用 Node 24，並把 `engines.node` 寫進 `frontend/package.json`、以 `.npmrc` 的 `engine-strict=true` 強制檢查。
+* CI 的 action 一併升版（`checkout@v7`、`setup-node@v7`、`setup-java@v5`），清掉 runner 的 Node 20 執行環境淘汰警告。
 * §8 所述「Docker Compose 骨架也還沒建立」在本文件撰寫後已完成（Task 13，`8254511`）；CI 目前仍不含容器建置。
+
+### 緊急繞道
+
+`enforce_admins` 為開啟狀態，倉庫擁有者同樣不能直接推 `main`。真的需要繞過時，先關掉該設定再推、推完立刻補回：
+
+```
+gh api -X DELETE repos/We1Yu/Happy_Trade/branches/main/protection/enforce_admins
+gh api -X POST   repos/We1Yu/Happy_Trade/branches/main/protection/enforce_admins
+```
