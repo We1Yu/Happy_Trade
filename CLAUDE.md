@@ -47,5 +47,9 @@
 
 - Sub-agent 規範：`.claude/agents/happy-trade-governance.md`
 - 架構決策：符合條件的變更必須寫入 `docs/adr/`（判斷標準見 `docs/adr/README.md`）。
-- 實作變更：必須更新 `CHANGELOG.md` 的 `[Unreleased]` 區塊。
+- 實作變更：必須更新 `CHANGELOG.md` 的 `[Unreleased]` 區塊，格式如下：
+  - **依日期分組**：`[Unreleased]` 底下先開 `### YYYY-MM-DD`（新的日期在上），日期底下再分 `#### 新增` / `#### 變更` / `#### 修正` / `#### 移除`。同一天已有區塊就往裡面加，不要新開一個。
+  - **每條結尾附 commit hash**，寫成 (`abc1234`)。同一次 commit 帶進多條變更時，每條都附同一個 hash。
+  - **日期用該變更 commit 的日期**（`git log --date=short` 的 `%ad`），不是寫文件當天。
+  - **hash 在後續 docs commit 補上**：功能 commit 先寫條目、hash 位置留 `(TBD)`，緊接著的 `docs:` commit 一併補 `CHANGELOG.md` 與 `docs/PROGRESS.md` 的 hash。
 - 進度看板：每完成一個 Task，必須在同一次 commit 更新 `docs/PROGRESS.md`（打勾、填 commit hash、改寫「現在的狀態」與「下一個動作」）。

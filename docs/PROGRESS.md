@@ -5,9 +5,9 @@
 
 ## 現在的狀態
 
-**13 / 14 完成（93%）— `docker compose up` 一次拉起三個服務，剩治理收尾。**
+**14 / 14 完成（100%）— v1 全部切片收工，治理紀錄補齊。**
 
-**下一個動作：Task 14 治理紀錄（ADR 0002 市場資料與圖表技術選型 + CHANGELOG 收尾）。**
+**下一個動作：把 `feat/market-page` 合回 `main`；接著決定下一個切片（建議先做 K 線持久化到 Postgres，AI 訊號與回測都要靠它）。**
 
 ## Task 清單
 
@@ -26,7 +26,7 @@
 | 11 | Polling hooks（useTicker / useChartData） | ✅ | `3934f25` |
 | 12 | Market page UI（圖表 + 切換器） | ✅ | `e3b42f2` |
 | 13 | Docker Compose（db / backend / frontend） | ✅ | `8254511` |
-| 14 | 治理紀錄（ADR 0002 + CHANGELOG 收尾） | ⬜ | — |
+| 14 | 治理紀錄（ADR 0002 + CHANGELOG 收尾） | ✅ | `TBD` |
 
 圖例：✅ 完成 ｜ 🔄 進行中 ｜ ⬜ 未開始
 
@@ -44,7 +44,9 @@
 
 ## 懸而未決
 
-- ADR 0002（市場資料與圖表技術選型）尚未寫入
+- K 線沒有持久化：Postgres 容器起來了但後端沒接，Caffeine 快取重啟即失。AI 訊號與模擬交易估值要重用同一份資料的話，得先補持久層（值得另開 ADR 0003）
+- `symbol` 只有 `[A-Z0-9]{1,20}` 格式檢查，沒有可交易標的白名單，等同對外開放一個 Binance 代理
+- 快取過期的同時若上游失敗，會直接把 5xx 傳給前端，沒有 stale-while-error 的降級路徑
 - `./mvnw spring-boot:run` 在本機跑不起來：專案路徑含非 ASCII 字元（`文件`），Maven fork 出去的 JVM 收到被編碼破壞的 classpath，會噴 `ClassNotFoundException: com.happytrade.HappyTradeApplication`。改用打包後 `java -jar` 可正常啟動
 - 用自動化瀏覽器驗證頁面時，分頁若在背景視窗（`document.visibilityState === 'hidden'`），`usePolling` 依設計完全不發請求，畫面會停在「載入中」——這不是 bug，驗證時要讓分頁真的可見
 - Task 1 名為「health check」，但後端其實沒有 `/api/health` 這個 HTTP 端點（只有 context 載入的冒煙測試）；先前看板誤記為可用

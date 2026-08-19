@@ -20,3 +20,4 @@
 | # | 標題 | 狀態 |
 |---|---|---|
 | [0001](0001-initial-system-architecture.md) | 初始系統架構 | accepted |
+| [0002](0002-market-data-and-charting-stack.md) | 市場資料擷取與圖表技術選型 | accepted |
