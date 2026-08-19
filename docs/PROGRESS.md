@@ -1,13 +1,15 @@
 # Happy_Trade v1 進度看板
 
 > 唯一的進度真相來源。每完成一個 Task 就在這裡打勾（跟 CHANGELOG 同一次 commit）。
-> 分支：`feat/market-page` ｜ 計畫全文：`docs/superpowers/plans/2026-08-18-market-page.md`
+> 分支：`main`（`feat/market-page` 已合入）｜ 計畫全文：`docs/superpowers/plans/2026-08-18-market-page.md`
 
 ## 現在的狀態
 
 **14 / 14 完成（100%）— v1 全部切片收工，治理紀錄補齊。**
 
-**下一個動作：把 `feat/market-page` 合回 `main`；接著決定下一個切片（建議先做 K 線持久化到 Postgres，AI 訊號與回測都要靠它）。**
+**`feat/market-page` 已合回 `main` 並推上 origin（`48b4c6e`）。**
+
+**下一個動作：決定分支保護怎麼處理（repo 是 private，GitHub 免費方案擋住第三層防線）；之後的切片建議先做 K 線持久化到 Postgres，AI 訊號與回測都要靠它。**
 
 ## Task 清單
 
@@ -42,8 +44,18 @@
 - 整套容器：根目錄 `docker compose up --build -d` → db（5432，healthy）／backend（8080）／frontend（5173）三個服務同時起來，前端容器的 `/api` 走服務名 `backend:8080`。收工用 `docker compose down`
 - 容器版已驗過：`ticker` 回真實價格、`chart` 回 500 根 K 棒、`interval=3m` 回 400 `INVALID_PARAMETER`，`localhost:5173` 四窗格圖表正常渲染
 
+## v1 之後
+
+| Task | 狀態 | Commit |
+|------|------|--------|
+| CI 測試閘門（`ci.yml` + `pre-push` hook） | ✅ | `TBD` |
+| `main` 分支保護 | ⛔ | 受 GitHub 免費方案限制，待決策 |
+| K 線持久化到 Postgres（ADR 0003） | ⬜ | — |
+
 ## 懸而未決
 
+- `main` 分支保護做不了：repo 是 private，GitHub 免費方案的 branch protection 與 rulesets 都回 403。選項是轉 public、升級 Pro，或接受只有本機 hook ＋ CI 兩層防線
+- clone 後要手動跑一次 `git config core.hooksPath .githooks`，pre-push 閘門才會生效（git 不允許 repo 自動啟用 hook，這是安全設計）
 - K 線沒有持久化：Postgres 容器起來了但後端沒接，Caffeine 快取重啟即失。AI 訊號與模擬交易估值要重用同一份資料的話，得先補持久層（值得另開 ADR 0003）
 - `symbol` 只有 `[A-Z0-9]{1,20}` 格式檢查，沒有可交易標的白名單，等同對外開放一個 Binance 代理
 - 快取過期的同時若上游失敗，會直接把 5xx 傳給前端，沒有 stale-while-error 的降級路徑

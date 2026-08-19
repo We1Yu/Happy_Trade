@@ -15,10 +15,17 @@
 #### 新增
 
 - ADR 0002「市場資料擷取與圖表技術選型」（`docs/adr/0002-market-data-and-charting-stack.md`）：記錄選擇「後端轉接 Binance Spot 公開 REST ＋ 前端 Lightweight Charts」的理由與被否決的方案。資料更新機制據實記為**前端輪詢驅動的 pull-through 快取**（後端無 `@Scheduled`），並列出目前已知的取捨：K 線未持久化、快取過期遇上游失敗無降級路徑、symbol 無白名單、WebSocket 升級門檻未定義。(`2315b7d`)
+- CI 測試閘門：`.github/workflows/ci.yml` 在 push 到 `main` 與指向 `main` 的 PR 上，平行跑 `backend`（temurin 21 + `./mvnw -B verify`）與 `frontend`（Node 20 + `npm ci` → `npm run build` → `npm test`）兩個 job；job 名稱即分支保護要求的 status check 名稱，不可任意更名。(`TBD`)
+- `.githooks/pre-push` 本機閘門：push 前依序跑後端與前端測試，任一紅燈即中止 push，並提示 `git push --no-verify` 緊急繞道。刻意擋 push 而非 commit——commit 是本機可改寫的，push 才不可逆。啟用方式為 `git config core.hooksPath .githooks`（**每次 clone 後要各自跑一次**）。(`TBD`)
+- `.gitattributes`：把 `.githooks/**` 釘成 LF 換行，避免 Windows 的 CRLF 讓 shebang 失效（症狀是 `bad interpreter`）。(`TBD`)
 
 #### 變更
 
 - `CHANGELOG.md` 改為依日期分組（`### YYYY-MM-DD` 底下再分 `#### 新增` / `#### 變更` / `#### 修正` / `#### 移除`），每條補上對應的 commit hash；此格式約定同步寫入 `CLAUDE.md` 的治理章節。(`2315b7d`)
+
+#### 修正
+
+- `backend/mvnw` 在 git index 中的權限是 `100644`（Windows 上 commit 的檔案預設不帶執行位元），Linux CI runner 執行 `./mvnw` 會噴 `Permission denied`。以 `git update-index --chmod=+x` 修正為 `100755`。(`TBD`)
 
 ### 2026-08-18
 

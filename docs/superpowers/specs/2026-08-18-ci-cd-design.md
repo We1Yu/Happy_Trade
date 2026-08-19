@@ -1,7 +1,7 @@
 # CI 測試閘門與分支保護設計
 
 * 日期：2026-08-18
-* 狀態：proposed
+* 狀態：accepted（第 1、2 層已實作；第 3 層受 GitHub 方案限制，見 §9）
 * 範圍：在既有 GitHub remote（`We1Yu/Happy_Trade`）上建立自動化測試閘門，讓未通過測試的變更無法進入 `main`。
 
 ## 1. 目標
@@ -114,3 +114,10 @@ feat/xxx 分支
 * CD（自動部署）。目前尚無部署目標，Docker Compose 骨架也還沒建立（屬於後續 Task）。本次只做 CI 與閘門。
 * 測試覆蓋率門檻、靜態分析（linter、SpotBugs）。可日後另行加入 job。
 * Dependabot 或安全掃描。
+
+## 9. 實作結果（2026-08-19 補記）
+
+* 第 1 層（`.githooks/pre-push`）與第 2 層（`.github/workflows/ci.yml`）已實作，綠燈與紅燈路徑都實測過（故意寫失敗測試 → hook 以非零狀態中止 push，驗證後移除）。
+* **第 3 層無法實作**：本 repo 為 private，`gh api` 對 `branches/main/protection` 與 `rulesets` 皆回 403「Upgrade to GitHub Pro or make this repository public」。等待使用者在「轉 public」／「升級 Pro」／「只保留前兩層」之間決定，未自行改動 repo 可見性。因此成功條件 3、4 目前無法驗證。
+* 實作中發現規格未預期的一點：`backend/mvnw` 在 git index 是 `100644`，Linux runner 上 `./mvnw` 會因缺少執行位元而失敗，已用 `git update-index --chmod=+x` 修正。
+* §8 所述「Docker Compose 骨架也還沒建立」在本文件撰寫後已完成（Task 13，`8254511`）；CI 目前仍不含容器建置。

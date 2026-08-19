@@ -1,0 +1,29 @@
+#!/bin/sh
+# Test gate before push. Design: docs/superpowers/specs/2026-08-18-ci-cd-design.md.
+#
+# Deliberately a pre-push hook, not pre-commit: the backend suite takes tens of
+# seconds and commits stay cheap and rewritable. Push is the irreversible step.
+
+repo_root=$(git rev-parse --show-toplevel) || exit 1
+cd "$repo_root" || exit 1
+
+fail() {
+    printf '\n[pre-push] %s\n' "$1" >&2
+    printf '[pre-push] push 已中止。修好再推，或用 git push --no-verify 緊急繞過（繞不過 CI 與分支保護）。\n' >&2
+    exit 1
+}
+
+# Guard on directory existence so a partial checkout does not report a false failure.
+if [ -d backend ]; then
+    command -v java >/dev/null 2>&1 || fail '找不到 java，無法跑後端測試。'
+    printf '[pre-push] 後端測試（backend）...\n'
+    (cd backend && ./mvnw -B -q test) || fail '後端測試失敗（backend）。'
+fi
+
+if [ -d frontend ]; then
+    command -v npm >/dev/null 2>&1 || fail '找不到 npm，無法跑前端測試。'
+    printf '[pre-push] 前端測試（frontend）...\n'
+    (cd frontend && npm test) || fail '前端測試失敗（frontend）。'
+fi
+
+printf '[pre-push] 測試全綠，繼續 push。\n'

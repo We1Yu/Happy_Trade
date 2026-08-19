@@ -1,0 +1,3 @@
+# Hook scripts run through Git for Windows' sh; a CRLF shebang makes it fail
+# with "bad interpreter", so pin them to LF regardless of platform.
+.githooks/** text eol=lf
