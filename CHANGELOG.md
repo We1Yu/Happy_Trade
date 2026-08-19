@@ -26,8 +26,8 @@
 #### 修正
 
 - `backend/mvnw` 在 git index 中的權限是 `100644`（Windows 上 commit 的檔案預設不帶執行位元），Linux CI runner 執行 `./mvnw` 會噴 `Permission denied`。以 `git update-index --chmod=+x` 修正為 `100755`。(`bd31fd5`)
-- CI 的前端 job 在 Node 20 上跑不動：`jsdom@30` 要求 `^22.22.2 || ^24.15.0 || >=26`、`undici@8.10` 要求 `>=22.19.0`，Node 20 會在載入階段噴 `TypeError: webidl.util.markAsUncloneable is not a function`，9 個測試檔一個都沒跑到（本機 Node v24.15.0 因此完全看不出問題）。workflow 的 `node-version` 改為 `24`，並把 `engines.node: >=22.22.2` 寫進 `frontend/package.json`、以 `frontend/.npmrc` 的 `engine-strict=true` 強制檢查，讓版本不合時在 `npm ci` 就明確失敗，而不是拖到測試階段變成看不懂的錯誤。(`TBD`)
-- CI 使用的 action 升版（`checkout@v4`→`v7`、`setup-node@v4`→`v7`、`setup-java@v4`→`v5`），清掉 runner 的 Node 20 執行環境淘汰警告。(`TBD`)
+- CI 的前端 job 在 Node 20 上跑不動：`jsdom@30` 要求 `^22.22.2 || ^24.15.0 || >=26`、`undici@8.10` 要求 `>=22.19.0`，Node 20 會在載入階段噴 `TypeError: webidl.util.markAsUncloneable is not a function`，9 個測試檔一個都沒跑到（本機 Node v24.15.0 因此完全看不出問題）。workflow 的 `node-version` 改為 `24`，並把 `engines.node: >=22.22.2` 寫進 `frontend/package.json`、以 `frontend/.npmrc` 的 `engine-strict=true` 強制檢查，讓版本不合時在 `npm ci` 就明確失敗，而不是拖到測試階段變成看不懂的錯誤。(`d1b5662`)
+- CI 使用的 action 升版（`checkout@v4`→`v7`、`setup-node@v4`→`v7`、`setup-java@v4`→`v5`），清掉 runner 的 Node 20 執行環境淘汰警告。(`d1b5662`)
 
 ### 2026-08-18
 
