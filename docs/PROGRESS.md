@@ -9,7 +9,9 @@
 
 **`feat/market-page` 已合回 `main` 並推上 origin（`48b4c6e`）。**
 
-**下一個動作：決定分支保護怎麼處理（repo 是 private，GitHub 免費方案擋住第三層防線）；之後的切片建議先做 K 線持久化到 Postgres，AI 訊號與回測都要靠它。**
+**CI 三層防線到齊：本機 pre-push hook ／ GitHub Actions ／ `main` 分支保護。`main` 已不接受直接 push，所有變更走 PR。**
+
+**下一個動作：K 線持久化到 Postgres（先寫 ADR 0003 再動手）——AI 訊號與回測都要靠它。**
 
 ## Task 清單
 
@@ -34,6 +36,7 @@
 
 ## 目前能跑什麼
 
+- 開發流程：`main` 只能經由 PR 進入，且 `backend`／`frontend` 兩個 CI check 必須綠燈。本機 push 前 hook 會先跑完整測試（clone 後需執行一次 `git config core.hooksPath .githooks`）
 - 後端測試：`cd backend && ./mvnw test`（46 個測試全綠）
 - 後端啟動：`cd backend && ./mvnw package -DskipTests` 後 `java -jar target/happy-trade-backend-0.1.0-SNAPSHOT.jar` → `localhost:8080`
 - 可用 API：`/api/market/ticker`、`/api/market/chart`
@@ -49,12 +52,13 @@
 | Task | 狀態 | Commit |
 |------|------|--------|
 | CI 測試閘門（`ci.yml` + `pre-push` hook） | ✅ | `bd31fd5` |
-| `main` 分支保護 | ⛔ | 受 GitHub 免費方案限制，待決策 |
+| `main` 分支保護（PR + 2 個 status check） | ✅ | `TBD` |
 | K 線持久化到 Postgres（ADR 0003） | ⬜ | — |
 
 ## 懸而未決
 
-- `main` 分支保護做不了：repo 是 private，GitHub 免費方案的 branch protection 與 rulesets 都回 403。選項是轉 public、升級 Pro，或接受只有本機 hook ＋ CI 兩層防線
+- repo 已轉為 **public**（為了解鎖分支保護）。之後若要加入任何金鑰，必須走 GitHub Secrets 或本機 `.env`，不可進版控
+- `enforce_admins` 開啟，你自己也不能直接推 `main`。緊急繞道方式記在 `docs/superpowers/specs/2026-08-18-ci-cd-design.md` §9
 - clone 後要手動跑一次 `git config core.hooksPath .githooks`，pre-push 閘門才會生效（git 不允許 repo 自動啟用 hook，這是安全設計）
 - K 線沒有持久化：Postgres 容器起來了但後端沒接，Caffeine 快取重啟即失。AI 訊號與模擬交易估值要重用同一份資料的話，得先補持久層（值得另開 ADR 0003）
 - `symbol` 只有 `[A-Z0-9]{1,20}` 格式檢查，沒有可交易標的白名單，等同對外開放一個 Binance 代理
