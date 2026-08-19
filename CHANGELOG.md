@@ -18,7 +18,7 @@
 - CI 測試閘門：`.github/workflows/ci.yml` 在 push 到 `main` 與指向 `main` 的 PR 上，平行跑 `backend`（temurin 21 + `./mvnw -B verify`）與 `frontend`（Node 20 + `npm ci` → `npm run build` → `npm test`）兩個 job；job 名稱即分支保護要求的 status check 名稱，不可任意更名。(`bd31fd5`)
 - `.githooks/pre-push` 本機閘門：push 前依序跑後端與前端測試，任一紅燈即中止 push，並提示 `git push --no-verify` 緊急繞道。刻意擋 push 而非 commit——commit 是本機可改寫的，push 才不可逆。啟用方式為 `git config core.hooksPath .githooks`（**每次 clone 後要各自跑一次**）。(`bd31fd5`)
 - `.gitattributes`：把 `.githooks/**` 釘成 LF 換行，避免 Windows 的 CRLF 讓 shebang 失效（症狀是 `bad interpreter`）。(`bd31fd5`)
-- `main` 分支保護：要求 `backend` 與 `frontend` 兩個 status check 通過（strict，分支須與 `main` 同步）、變更必須經由 PR、`enforce_admins` 對擁有者同樣生效、禁止 force push 與刪除分支。實測直接 push 被 `GH006` 拒絕。為了解鎖此功能，repo 已由 private 轉為 public（免費方案的 private repo 對 branch protection 與 rulesets 一律回 403）；轉換前已確認追蹤中的檔案不含任何金鑰。(`TBD`)
+- `main` 分支保護：要求 `backend` 與 `frontend` 兩個 status check 通過（strict，分支須與 `main` 同步）、變更必須經由 PR、`enforce_admins` 對擁有者同樣生效、禁止 force push 與刪除分支。實測直接 push 被 `GH006` 拒絕。為了解鎖此功能，repo 已由 private 轉為 public（免費方案的 private repo 對 branch protection 與 rulesets 一律回 403）；轉換前已確認追蹤中的檔案不含任何金鑰。(`1bc085c`)
 
 #### 變更
 

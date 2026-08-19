@@ -52,7 +52,7 @@
 | Task | 狀態 | Commit |
 |------|------|--------|
 | CI 測試閘門（`ci.yml` + `pre-push` hook） | ✅ | `bd31fd5` |
-| `main` 分支保護（PR + 2 個 status check） | ✅ | `TBD` |
+| `main` 分支保護（PR + 2 個 status check） | ✅ | `1bc085c` |
 | K 線持久化到 Postgres（ADR 0003） | ⬜ | — |
 
 ## 懸而未決
